@@ -974,10 +974,24 @@ fn host_matches_list(url: &str, domains: &[String]) -> bool {
     let Some(host) = parsed.host_str() else {
         return false;
     };
+    let host = host.to_ascii_lowercase();
     domains.iter().any(|domain| {
-        let normalized = domain.trim().trim_start_matches('.');
-        host == normalized || host.ends_with(&format!(".{normalized}"))
+        let normalized = normalize_domain_filter(domain);
+        !normalized.is_empty() && (host == normalized || host.ends_with(&format!(".{normalized}")))
     })
+}
+
+fn normalize_domain_filter(domain: &str) -> String {
+    let trimmed = domain.trim();
+    let candidate = reqwest::Url::parse(trimmed)
+        .ok()
+        .and_then(|url| url.host_str().map(str::to_string))
+        .unwrap_or_else(|| trimmed.to_string());
+    candidate
+        .trim()
+        .trim_start_matches('.')
+        .trim_end_matches('/')
+        .to_ascii_lowercase()
 }
 
 fn dedupe_hits(hits: &mut Vec<SearchHit>) {
@@ -1856,8 +1870,8 @@ mod tests {
             "WebSearch",
             &json!({
                 "query": "rust web search",
-                "allowed_domains": ["docs.rs"],
-                "blocked_domains": ["example.com"]
+                "allowed_domains": ["https://DOCS.rs/"],
+                "blocked_domains": ["HTTPS://EXAMPLE.COM"]
             }),
         )
         .expect("WebSearch should succeed");
