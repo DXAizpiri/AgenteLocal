@@ -122,6 +122,7 @@ Estas herramientas ya han invertido meses de ingeniería en resolver exactamente
 ## 📎 Ver También
 
 - [Estrategia Recomendada para un Agente Local](LOCAL_AGENT_STRATEGY.md): documento de decisión sobre stack, arquitectura mínima y plan recomendado a partir de este punto.
+- [Blueprint Inicial del Nuevo Agente Local](LOCAL_AGENT_BLUEPRINT.md): documento operativo con estructura de carpetas, módulos, tools mínimas, sesión y fallback.
 - [README.md](../README.md): punto de entrada operativo del repositorio.
 
 ---

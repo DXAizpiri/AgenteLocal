@@ -174,15 +174,20 @@ Para retomar el contexto rapidamente:
 
 - `README.md`
 - `docs/OLLAMA_COMPATIBILITY_STATUS.md`
+- `docs/LOCAL_AGENT_BLUEPRINT.md`
 - `PHILOSOPHY.md`
 - `PARITY.md`
 - `rust/crates/tools/src/lib.rs`
 - `rust/crates/api/src/providers/openai_compat.rs`
 - `rust/crates/runtime/src/prompt.rs`
 
-## Siguiente Entregable Recomendado
+## Entregable Operativo Disponible
 
-El siguiente paso util seria redactar un documento de arranque del nuevo agente con:
+El blueprint operativo inicial ya esta documentado en:
+
+- `docs/LOCAL_AGENT_BLUEPRINT.md`
+
+Ese documento define:
 
 - estructura de carpetas;
 - contratos de herramientas;
