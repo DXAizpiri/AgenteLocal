@@ -8,4 +8,4 @@ export OPENAI_API_KEY="ollama_local"
 
 # Ejecutar claw y pasarle los argumentos que escribas
 cd rust
-./target/debug/claw.exe --model qwen2.5-coder prompt "$@"
+./target/debug/claw.exe --model qwen2.5-coder:32b prompt "$@"

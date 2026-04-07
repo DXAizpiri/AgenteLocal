@@ -7,7 +7,7 @@ Este repositorio contiene la versión compilable de `claw-code` configurada para
 Si clonas este repositorio en una máquina nueva, estos son los pasos a seguir para replicar el entorno de IA.
 
 ### 1. Instalar Ollama y el Modelo de Lenguaje
-El "cerebro" del agente corre de forma local. En este caso recomendamos el modelo `qwen2.5-coder`.
+El "cerebro" del agente corre de forma local. En este caso recomendamos el modelo `qwen2.5-coder:32b`.
 
 *   **Instalación Rápida:** Abre PowerShell y ejecuta:
     ```powershell
@@ -61,7 +61,7 @@ Ejecuta lo siguiente una única vez en tu terminal para guardarlo en la configur
 ```bash
 echo '
 # Alias para tu Agente Local (Ollama + Claw)
-alias agente='\''OPENAI_BASE_URL="http://127.0.0.1:11434/v1" OPENAI_API_KEY="ollama_local" /c/Work/claw-code/rust/target/release/claw.exe --model qwen2.5-coder'\''
+alias agente='\''OPENAI_BASE_URL="http://127.0.0.1:11434/v1" OPENAI_API_KEY="ollama_local" /c/Work/claw-code/rust/target/release/claw.exe --model qwen2.5-coder:32b'\''
 ' >> ~/.bashrc
 source ~/.bashrc
 ```
@@ -86,6 +86,12 @@ agente prompt "Revisa todos los archivos .js de este directorio y agrega documen
 ```bash
 agente prompt "Encuentra el error de tipeo en index.html y arréglalo automáticamente."
 ```
+
+## ⚠️ Problemas Conocidos (Tool Calling y Ollama)
+
+Debido a diferencias de formato entre las directrices del *prompt* interno (estrictamente diseñadas para Claude 3.5) y el formato de respuesta nativo de modelos Open Source a través de Ollama (ej. `qwen2.5-coder`), el agente actualmente sufre fallos al intentar crear o modificar archivos de forma autónoma.
+
+👉 **Para continuar el trabajo desde el punto actual y conocer los próximos pasos, revisa el [Estado de Compatibilidad de Ollama](docs/OLLAMA_COMPATIBILITY_STATUS.md)**.
 
 ---
 *Nota: El archivo README original del port se movió a `README_ORIGINAL.md` por temas de licencia y documentación de los autores base.*
