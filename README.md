@@ -1,106 +1,111 @@
-# Agente Local (Claw Code + Ollama) 🚀
+# Agente Local de Código (Aider + Gemma 4 + Ollama) 🚀
 
-Este repositorio contiene la versión compilable de `claw-code` configurada para funcionar de manera **completamente local y gratuita** en Windows (usando bash), aprovechando modelos open source mediante **Ollama**, en lugar de consumir saldo de la API de Anthropic.
+Un entorno de **agente de IA para código completamente local, gratuito y sin nube**, ejecutándose en Windows con bash.
 
-## 🛠️ Requisitos Previos e Instalación (Windows + Bash)
+## Stack Actual
 
-Si clonas este repositorio en una máquina nueva, estos son los pasos a seguir para replicar el entorno de IA.
+| Componente | Rol | Tamaño |
+|---|---|---|
+| **Ollama** | Servidor local que ejecuta el modelo de IA | ~50MB |
+| **Gemma 4** (Google) | El modelo de lenguaje (el cerebro) | ~9.6GB |
+| **Aider** | Agente CLI que edita código, busca ficheros y hace commits | ~100MB |
 
-### 1. Instalar Ollama y el Modelo de Lenguaje
-El "cerebro" del agente corre de forma local. En este caso recomendamos el modelo `qwen2.5-coder:32b`.
-
-*   **Instalación Rápida:** Abre PowerShell y ejecuta:
-    ```powershell
-    irm https://ollama.com/install.ps1 | iex
-    ```
-*   **Descargar el Modelo:** Una vez instalado Ollama, abre tu terminal y ejecuta:
-    ```bash
-    ollama run qwen2.5-coder:32b
-    ```
-    *(Si tienes 32GB de RAM o más. Si tu equipo es menos potente, puedes usar la versión `7b` o `14b`)*.
-
-### 2. Instalar el Compilador de Rust
-Claw Code está escrito en Rust y necesita ser compilado localmente.
-
-*   En Git Bash, ejecuta el instalador estándar:
-    ```bash
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-    ```
-*   *(Nota: Después de instalar, cierra y vuelve a abrir tu terminal o ejecuta `source $HOME/.cargo/env`)*.
-
-### 3. Instalar Microsoft C++ Build Tools
-Dado que Rust necesita compilar paquetes de criptografía (como `ring`), necesitas soporte nativo para compiladores C++. En Windows, la forma más rápida de obtenerlo es desde PowerShell:
-
-```powershell
-winget install Microsoft.VisualStudio.2022.BuildTools --force --override "--wait --quiet --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended"
-```
-*(Es importante reiniciar la terminal o la computadora después de esta instalación si los compiladores C++ siguen sin detectarse).*
+Toda la comunicación es `localhost:11434`. **Cero tráfico a la nube.**
 
 ---
 
-## 🏗️ Compilación
+## 🛠️ Instalación Rápida (Windows + Bash)
 
-Una vez cumplidos los requisitos previos, sitúate en la base de este repositorio y compila el agente en modo optimizado:
+### 1. Instalar Ollama
+
+Abre PowerShell y ejecuta:
+```powershell
+irm https://ollama.com/install.ps1 | iex
+```
+
+### 2. Descargar el Modelo
 
 ```bash
-export PATH="$PATH:$HOME/.cargo/bin"
-cd rust
-cargo build --release
+ollama pull gemma4
 ```
+*(Descarga ~9.6GB. Requiere al menos 16GB de RAM.)*
 
-Esto generará el ejecutable final en `rust/target/release/claw.exe`.
+### 3. Instalar Aider
+
+```bash
+pip install aider-chat
+```
 
 ---
 
-## ⚙️ Configuración Global (Bash Alias)
+## 🤔 Uso
 
-Para usar a tu agente de IA desde **cualquier directorio** de tu computadora sin tener que navegar a la carpeta del repositorio, inyectamos un alias en Bash que intercepta variables de entorno.
+Navega a la carpeta de cualquier proyecto y ejecuta:
 
-Ejecuta lo siguiente una única vez en tu terminal para guardarlo en la configuración de Git Bash:
+```bash
+aider --model ollama/gemma4
+```
+
+Esto abre un chat interactivo donde puedes:
+- Pedirle que cree ficheros nuevos
+- Pedirle que edite código existente
+- Hacer búsquedas en el repositorio
+- Todo con auto-commit a Git
+
+**Ejemplo:**
+```
+> Crea un archivo utils.py con una función que valide emails
+> Busca todos los archivos .js y añade documentación JSDoc
+> Refactoriza la función login() para usar async/await
+```
+
+### Crear un Alias Global (opcional)
+
+Para no tener que escribir el comando completo cada vez:
 
 ```bash
 echo '
-# Alias para tu Agente Local (Ollama + Claw)
-alias agente='\''OPENAI_BASE_URL="http://127.0.0.1:11434/v1" OPENAI_API_KEY="ollama_local" /c/Work/claw-code/rust/target/release/claw.exe --model qwen2.5-coder:32b'\''
+# Agente Local (Aider + Gemma 4)
+alias agente="aider --model ollama/gemma4"
 ' >> ~/.bashrc
 source ~/.bashrc
 ```
 
-*(Asegúrate de ajustar `/c/Work/claw-code` por la ruta real donde hayas clonado este repositorio en la nueva máquina).*
-
----
-
-## 🤔 Uso del Agente
-
-Ahora puedes ir a la carpeta de cualquier de tus proyectos web u otros repositorios y hablar directamente con el agente usando el comando `agente`:
-
-**Para abrir sesión de chat interactiva:**
+Después podrás usar simplemente:
 ```bash
 agente
 ```
 
-**Para tareas de fondo asíncronas / automatización ("One-Shot Prompt"):**
-```bash
-agente prompt "Revisa todos los archivos .js de este directorio y agrega documentación."
-```
-```bash
-agente prompt "Encuentra el error de tipeo en index.html y arréglalo automáticamente."
-```
+---
 
-## ⚠️ Problemas Conocidos (Tool Calling y Ollama)
+## 📖 Sobre Este Repositorio
 
-Debido a diferencias de formato entre las directrices del *prompt* interno (estrictamente diseñadas para Claude 3.5) y el formato de respuesta nativo de modelos Open Source a través de Ollama (ej. `qwen2.5-coder`), el agente actualmente sufre fallos al intentar crear o modificar archivos de forma autónoma.
+Este repositorio contiene el código fuente de **Claw Code**, un port open-source del sistema agéntico de Claude Code (Anthropic) escrito en Rust.
 
-👉 **Para continuar el trabajo desde el punto actual y conocer los próximos pasos, revisa el [Estado de Compatibilidad de Ollama](docs/OLLAMA_COMPATIBILITY_STATUS.md)**.
+### ¿Por qué no usamos Claw Code directamente?
 
-## 📚 Documentos Clave para Continuar
+Claw Code fue diseñado para funcionar con Claude 3.5 (API de Anthropic en la nube). Al intentar conectarlo con modelos locales vía Ollama, descubrimos que el modelo local no ejecuta correctamente las llamadas a herramientas (*tool calling*) que el CLI necesita. El modelo entiende las peticiones pero responde con texto plano en vez de JSON estructurado.
 
-Si otro agente o desarrollador abre este repositorio y necesita recuperar el contexto correcto antes de tocar código, estos son los documentos de referencia:
+**Diagnóstico completo:** [docs/OLLAMA_COMPATIBILITY_STATUS.md](docs/OLLAMA_COMPATIBILITY_STATUS.md)
 
-- [Estado de Compatibilidad de Ollama](docs/OLLAMA_COMPATIBILITY_STATUS.md): diagnóstico del bloqueo actual de `claw` con modelos locales.
-- [Estrategia Recomendada para un Agente Local](docs/LOCAL_AGENT_STRATEGY.md): decisión de stack, criterio técnico y plan recomendado para el siguiente agente.
-- [PHILOSOPHY.md](PHILOSOPHY.md): explica qué partes del sistema son realmente el producto y cuáles son solo artefactos.
-- [PARITY.md](PARITY.md): estado real de implementación del port de Rust y sus límites actuales.
+### ¿Para qué sirve entonces este repo?
+
+Como **referencia de arquitectura** de un agente de código profesional:
+- Diseño de herramientas (tools) y sus contratos → `rust/crates/tools/src/lib.rs`
+- Separación de capas (proveedor, runtime, tools, permisos) → `rust/crates/`
+- Modelo de seguridad y permisos
+- Compatibilidad OpenAI → `rust/crates/api/src/providers/openai_compat.rs`
+- Filosofía de producto → [PHILOSOPHY.md](PHILOSOPHY.md)
+
+### Documentos de Referencia
+
+| Documento | Contenido |
+|---|---|
+| [OLLAMA_COMPATIBILITY_STATUS.md](docs/OLLAMA_COMPATIBILITY_STATUS.md) | Diagnóstico técnico de por qué Claw no funciona con Ollama |
+| [LOCAL_AGENT_STRATEGY.md](docs/LOCAL_AGENT_STRATEGY.md) | Análisis de opciones y decisión de usar Aider |
+| [PHILOSOPHY.md](PHILOSOPHY.md) | Arquitectura y filosofía del sistema agéntico original |
+| [PARITY.md](PARITY.md) | Estado del port de Rust respecto al original |
 
 ---
-*Nota: El archivo README original del port se movió a `README_ORIGINAL.md` por temas de licencia y documentación de los autores base.*
+
+*Nota: El README original del port se conserva en [README_ORIGINAL.md](README_ORIGINAL.md).*

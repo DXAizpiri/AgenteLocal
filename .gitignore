@@ -9,3 +9,7 @@ archive/
 # Claw local artifacts and logs
 .claw/
 *.log
+
+# Debug notes
+_DEBUG_NOTES*.*
+.aider*
