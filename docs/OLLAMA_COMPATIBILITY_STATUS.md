@@ -119,6 +119,11 @@ Estas herramientas ya han invertido meses de ingeniería en resolver exactamente
 - Claw Code como proyecto directo está bloqueado por incompatibilidad de formato
 - Ya tenemos Ollama + Qwen2.5-coder:32b funcionando correctamente en la máquina
 
+## 📎 Ver También
+
+- [Estrategia Recomendada para un Agente Local](LOCAL_AGENT_STRATEGY.md): documento de decisión sobre stack, arquitectura mínima y plan recomendado a partir de este punto.
+- [README.md](../README.md): punto de entrada operativo del repositorio.
+
 ---
 
 *Documento generado como referencia para retomar el trabajo en futuras sesiones.*

@@ -93,5 +93,14 @@ Debido a diferencias de formato entre las directrices del *prompt* interno (estr
 
 👉 **Para continuar el trabajo desde el punto actual y conocer los próximos pasos, revisa el [Estado de Compatibilidad de Ollama](docs/OLLAMA_COMPATIBILITY_STATUS.md)**.
 
+## 📚 Documentos Clave para Continuar
+
+Si otro agente o desarrollador abre este repositorio y necesita recuperar el contexto correcto antes de tocar código, estos son los documentos de referencia:
+
+- [Estado de Compatibilidad de Ollama](docs/OLLAMA_COMPATIBILITY_STATUS.md): diagnóstico del bloqueo actual de `claw` con modelos locales.
+- [Estrategia Recomendada para un Agente Local](docs/LOCAL_AGENT_STRATEGY.md): decisión de stack, criterio técnico y plan recomendado para el siguiente agente.
+- [PHILOSOPHY.md](PHILOSOPHY.md): explica qué partes del sistema son realmente el producto y cuáles son solo artefactos.
+- [PARITY.md](PARITY.md): estado real de implementación del port de Rust y sus límites actuales.
+
 ---
 *Nota: El archivo README original del port se movió a `README_ORIGINAL.md` por temas de licencia y documentación de los autores base.*
