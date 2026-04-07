@@ -1,93 +1,91 @@
-# Claw Code
+# Agente Local (Claw Code + Ollama) 🚀
 
-<p align="center">
-  <a href="https://github.com/ultraworkers/claw-code">ultraworkers/claw-code</a>
-  ·
-  <a href="./USAGE.md">Usage</a>
-  ·
-  <a href="./rust/README.md">Rust workspace</a>
-  ·
-  <a href="./PARITY.md">Parity</a>
-  ·
-  <a href="./ROADMAP.md">Roadmap</a>
-  ·
-  <a href="https://discord.gg/5TUQKqFWd">UltraWorkers Discord</a>
-</p>
+Este repositorio contiene la versión compilable de `claw-code` configurada para funcionar de manera **completamente local y gratuita** en Windows (usando bash), aprovechando modelos open source mediante **Ollama**, en lugar de consumir saldo de la API de Anthropic.
 
-<p align="center">
-  <a href="https://star-history.com/#ultraworkers/claw-code&Date">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=ultraworkers/claw-code&type=Date&theme=dark" />
-      <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=ultraworkers/claw-code&type=Date" />
-      <img alt="Star history for ultraworkers/claw-code" src="https://api.star-history.com/svg?repos=ultraworkers/claw-code&type=Date" width="600" />
-    </picture>
-  </a>
-</p>
+## 🛠️ Requisitos Previos e Instalación (Windows + Bash)
 
-<p align="center">
-  <img src="assets/claw-hero.jpeg" alt="Claw Code" width="300" />
-</p>
+Si clonas este repositorio en una máquina nueva, estos son los pasos a seguir para replicar el entorno de IA.
 
-Claw Code is the public Rust implementation of the `claw` CLI agent harness.
-The canonical implementation lives in [`rust/`](./rust), and the current source of truth for this repository is **ultraworkers/claw-code**.
+### 1. Instalar Ollama y el Modelo de Lenguaje
+El "cerebro" del agente corre de forma local. En este caso recomendamos el modelo `qwen2.5-coder`.
 
-> [!IMPORTANT]
-> Start with [`USAGE.md`](./USAGE.md) for build, auth, CLI, session, and parity-harness workflows. Make `claw doctor` your first health check after building, use [`rust/README.md`](./rust/README.md) for crate-level details, read [`PARITY.md`](./PARITY.md) for the current Rust-port checkpoint, and see [`docs/container.md`](./docs/container.md) for the container-first workflow.
+*   **Instalación Rápida:** Abre PowerShell y ejecuta:
+    ```powershell
+    irm https://ollama.com/install.ps1 | iex
+    ```
+*   **Descargar el Modelo:** Una vez instalado Ollama, abre tu terminal y ejecuta:
+    ```bash
+    ollama run qwen2.5-coder:32b
+    ```
+    *(Si tienes 32GB de RAM o más. Si tu equipo es menos potente, puedes usar la versión `7b` o `14b`)*.
 
-## Current repository shape
+### 2. Instalar el Compilador de Rust
+Claw Code está escrito en Rust y necesita ser compilado localmente.
 
-- **`rust/`** — canonical Rust workspace and the `claw` CLI binary
-- **`USAGE.md`** — task-oriented usage guide for the current product surface
-- **`PARITY.md`** — Rust-port parity status and migration notes
-- **`ROADMAP.md`** — active roadmap and cleanup backlog
-- **`PHILOSOPHY.md`** — project intent and system-design framing
-- **`src/` + `tests/`** — companion Python/reference workspace and audit helpers; not the primary runtime surface
+*   En Git Bash, ejecuta el instalador estándar:
+    ```bash
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+    ```
+*   *(Nota: Después de instalar, cierra y vuelve a abrir tu terminal o ejecuta `source $HOME/.cargo/env`)*.
 
-## Quick start
+### 3. Instalar Microsoft C++ Build Tools
+Dado que Rust necesita compilar paquetes de criptografía (como `ring`), necesitas soporte nativo para compiladores C++. En Windows, la forma más rápida de obtenerlo es desde PowerShell:
+
+```powershell
+winget install Microsoft.VisualStudio.2022.BuildTools --force --override "--wait --quiet --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended"
+```
+*(Es importante reiniciar la terminal o la computadora después de esta instalación si los compiladores C++ siguen sin detectarse).*
+
+---
+
+## 🏗️ Compilación
+
+Una vez cumplidos los requisitos previos, sitúate en la base de este repositorio y compila el agente en modo optimizado:
 
 ```bash
+export PATH="$PATH:$HOME/.cargo/bin"
 cd rust
-cargo build --workspace
-./target/debug/claw --help
-./target/debug/claw prompt "summarize this repository"
+cargo build --release
 ```
 
-Authenticate with either an API key or the built-in OAuth flow:
+Esto generará el ejecutable final en `rust/target/release/claw.exe`.
+
+---
+
+## ⚙️ Configuración Global (Bash Alias)
+
+Para usar a tu agente de IA desde **cualquier directorio** de tu computadora sin tener que navegar a la carpeta del repositorio, inyectamos un alias en Bash que intercepta variables de entorno.
+
+Ejecuta lo siguiente una única vez en tu terminal para guardarlo en la configuración de Git Bash:
 
 ```bash
-export ANTHROPIC_API_KEY="sk-ant-..."
-# or
-cd rust
-./target/debug/claw login
+echo '
+# Alias para tu Agente Local (Ollama + Claw)
+alias agente='\''OPENAI_BASE_URL="http://127.0.0.1:11434/v1" OPENAI_API_KEY="ollama_local" /c/Work/claw-code/rust/target/release/claw.exe --model qwen2.5-coder'\''
+' >> ~/.bashrc
+source ~/.bashrc
 ```
 
-Run the workspace test suite:
+*(Asegúrate de ajustar `/c/Work/claw-code` por la ruta real donde hayas clonado este repositorio en la nueva máquina).*
 
+---
+
+## 🤔 Uso del Agente
+
+Ahora puedes ir a la carpeta de cualquier de tus proyectos web u otros repositorios y hablar directamente con el agente usando el comando `agente`:
+
+**Para abrir sesión de chat interactiva:**
 ```bash
-cd rust
-cargo test --workspace
+agente
 ```
 
-## Documentation map
+**Para tareas de fondo asíncronas / automatización ("One-Shot Prompt"):**
+```bash
+agente prompt "Revisa todos los archivos .js de este directorio y agrega documentación."
+```
+```bash
+agente prompt "Encuentra el error de tipeo en index.html y arréglalo automáticamente."
+```
 
-- [`USAGE.md`](./USAGE.md) — quick commands, auth, sessions, config, parity harness
-- [`rust/README.md`](./rust/README.md) — crate map, CLI surface, features, workspace layout
-- [`PARITY.md`](./PARITY.md) — parity status for the Rust port
-- [`rust/MOCK_PARITY_HARNESS.md`](./rust/MOCK_PARITY_HARNESS.md) — deterministic mock-service harness details
-- [`ROADMAP.md`](./ROADMAP.md) — active roadmap and open cleanup work
-- [`PHILOSOPHY.md`](./PHILOSOPHY.md) — why the project exists and how it is operated
-
-## Ecosystem
-
-Claw Code is built in the open alongside the broader UltraWorkers toolchain:
-
-- [clawhip](https://github.com/Yeachan-Heo/clawhip)
-- [oh-my-openagent](https://github.com/code-yeongyu/oh-my-openagent)
-- [oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode)
-- [oh-my-codex](https://github.com/Yeachan-Heo/oh-my-codex)
-- [UltraWorkers Discord](https://discord.gg/5TUQKqFWd)
-
-## Ownership / affiliation disclaimer
-
-- This repository does **not** claim ownership of the original Claude Code source material.
-- This repository is **not affiliated with, endorsed by, or maintained by Anthropic**.
+---
+*Nota: El archivo README original del port se movió a `README_ORIGINAL.md` por temas de licencia y documentación de los autores base.*
