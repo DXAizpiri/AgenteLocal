@@ -64,9 +64,9 @@ El repositorio actual aporta ideas utiles, pero no es una base ideal para el age
 Problemas principales:
 
 - El prompt y parte del runtime siguen claramente orientados a Claude/Anthropic.
-- El documento `docs/OLLAMA_COMPATIBILITY_STATUS.md` confirma que el agente no ejecuta bien las herramientas con Ollama.
+- El documento `OLLAMA_COMPATIBILITY_STATUS.md` confirma que el agente no ejecuta bien las herramientas con Ollama.
 - El port de Rust todavia arrastra una refactorizacion incompleta del cliente multi-provider.
-- El valor real de `claw-code` no esta solo en el binario, sino en el sistema externo de coordinacion descrito en `PHILOSOPHY.md`.
+- El valor real de `claw-code` no esta solo en el binario, sino en el sistema externo de coordinacion descrito en `../../reference/claw-code/PHILOSOPHY.md`.
 
 Conclusión practica:
 
@@ -172,20 +172,20 @@ La decision operativa recomendada para seguir trabajando sobre este repositorio 
 
 Para retomar el contexto rapidamente:
 
-- `README.md`
-- `docs/OLLAMA_COMPATIBILITY_STATUS.md`
-- `docs/LOCAL_AGENT_BLUEPRINT.md`
-- `PHILOSOPHY.md`
-- `PARITY.md`
-- `rust/crates/tools/src/lib.rs`
-- `rust/crates/api/src/providers/openai_compat.rs`
-- `rust/crates/runtime/src/prompt.rs`
+- `../README.md`
+- `OLLAMA_COMPATIBILITY_STATUS.md`
+- `LOCAL_AGENT_BLUEPRINT.md`
+- `../../reference/claw-code/PHILOSOPHY.md`
+- `../../reference/claw-code/PARITY.md`
+- `../../reference/claw-code/rust/crates/tools/src/lib.rs`
+- `../../reference/claw-code/rust/crates/api/src/providers/openai_compat.rs`
+- `../../reference/claw-code/rust/crates/runtime/src/prompt.rs`
 
 ## Entregable Operativo Disponible
 
 El blueprint operativo inicial ya esta documentado en:
 
-- `docs/LOCAL_AGENT_BLUEPRINT.md`
+- `LOCAL_AGENT_BLUEPRINT.md`
 
 Ese documento define:
 
